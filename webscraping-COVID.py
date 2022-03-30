@@ -2,6 +2,7 @@
 # pip install bs4 (for beautifulsoup - python tool to parse HTML)
 
 
+from sre_parse import State
 from urllib.request import urlopen, Request
 from bs4 import BeautifulSoup
 
@@ -18,6 +19,62 @@ from bs4 import BeautifulSoup
 url = 'https://www.worldometers.info/coronavirus/country/us'
 # Request in case 404 Forbidden error
 headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.3'}
+
+
+req = Request(url, headers = headers)
+
+webpage = urlopen(req).read()
+
+soup = BeautifulSoup(webpage, "html.parser")
+
+title = soup.title
+
+print(title.text)
+
+table_rows = soup.findAll("tr")
+
+state_death_ratio = ""
+state_best_testing = ""
+state_worst_testing = ""
+highest_death_ratio = 0
+high_test_ratio = 0
+low_test_ratio = 100
+
+
+for row in table_rows[2:51]:
+    td = row.findAll('td')
+
+    state = td[1].text
+    total_cases = int(td[2].text.replace(',','')) 
+    total_death = int(td[4].text.replace(',',''))
+    total_tested = int(td[10].text.replace(',',''))
+
+    death_ratio = round((total_death/total_cases)*100,2)
+    test_ratio = total_cases/total_tested
+   
+    if death_ratio > highest_death_ratio:
+        state_death_ratio = state
+        highest_death_ratio = death_ratio
+
+    #if test_ratio > high_test_ratio:
+
+        
+    
+
+    #print(f"State: {state}")
+    #print(f"Total Cases: {total_cases}")
+    #print(f"Total Deaths: {total_death}")
+    #print(f"Total Tested: {total_tested}")
+
+    
+    
+    print(f"Death Ratio: {state_death_ratio}%")
+
+    input()
+
+    
+
+    
 
 
 
